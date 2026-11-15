@@ -1,17 +1,11 @@
 <x-app-layout :title="'Kirim Pengaduan & Aspirasi'" activeNav="pengaduan">
     <x-section-wrapper bgVariant="mist">
         <div class="space-y-6">
-            <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div class="max-w-3xl">
-                    <span class="inline-block px-3 py-1 rounded-md bg-desa-soft text-desa-dark border border-desa-border text-xs font-bold mb-2">
-                        Layanan Pengaduan Warga &bull; Desa Pabelan
-                    </span>
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-desa-dark tracking-tight">
                         Sampaikan Pengaduan &amp; Aspirasi
                     </h1>
-                    <p class="text-sm text-desa-muted mt-2">
-                        Isi informasi dengan jelas agar Pemerintah Desa Pabelan dapat menindaklanjuti laporan Anda. Setelah dikirim, simpan kode tiket untuk memantau status.
-                    </p>
                 </div>
                 <x-button variant="secondary" href="{{ route('warga.pengaduan.index') }}">
                     Lihat Riwayat Pengaduan Saya
@@ -23,8 +17,7 @@
                     <div class="flex items-center gap-2.5">
                         <span class="w-7 h-7 rounded-full bg-desa-action text-white flex items-center justify-center font-bold text-xs shrink-0">&check;</span>
                         <div>
-                            <p class="font-bold text-desa-dark">Pelapor Terautentikasi: {{ auth()->user()->name }} ({{ auth()->user()->email }})</p>
-                            <p class="text-[11px] text-desa-muted">Laporan ini akan otomatis tercatat ke buku riwayat pengaduan akun Anda.</p>
+                            <p class="font-bold text-desa-dark">Pelapor Terautentikasi: {{ auth()->user()->name }}</p>
                         </div>
                     </div>
                     @if (auth()->user()->warga)
@@ -65,11 +58,8 @@
                             @checked(old('is_anonim'))
                             class="h-5 w-5 rounded border-2 border-desa-border text-desa-action focus:ring-2 focus:ring-desa-action"
                         />
-                        <span class="text-sm font-bold text-desa-dark">Kirim sebagai pengaduan anonim (sembunyikan identitas saya)</span>
+                        <span class="text-sm font-bold text-desa-dark">Kirim sebagai pengaduan anonim</span>
                     </label>
-                    <p class="text-xs text-desa-muted ml-8">
-                        Jika dicentang, nama lengkap dan nomor HP Anda tidak akan disimpan maupun ditampilkan kepada admin desa dan publik.
-                    </p>
                     @error('is_anonim')
                         <p class="text-xs font-bold text-red-600 mt-1">{{ $message }}</p>
                     @enderror
@@ -77,9 +67,6 @@
 
                 <div id="identitas-anonim-notice" class="{{ old('is_anonim') ? '' : 'hidden' }} rounded-xl border-2 border-desa-border bg-desa-soft/70 p-4 text-xs text-desa-dark">
                     <p class="font-extrabold text-sm text-desa-dark">Mode Pengaduan Anonim Aktif</p>
-                    <p class="mt-1 text-desa-muted">
-                        Identitas Anda akan tercatat sebagai <span class="font-bold text-desa-dark">Pelapor Anonim</span> dan nomor telepon Anda dirahasiakan sepenuhnya.
-                    </p>
                 </div>
 
                 <div id="identitas-pelapor-fields" class="{{ old('is_anonim') ? 'hidden' : 'grid' }} grid-cols-1 sm:grid-cols-2 gap-5">
@@ -160,16 +147,12 @@
                     @enderror
 
                     <div class="mt-4 relative z-0 isolate">
-                        <p id="peta-petunjuk" class="text-sm text-desa-muted mb-2">
-                            Klik peta untuk memilih titik kejadian. Koordinat akan mengisi kolom lokasi dan masih dapat Anda ubah.
-                        </p>
                         <div
                             id="peta-lokasi"
                             class="relative z-0 isolate h-72 sm:h-96 w-full rounded-lg border-2 border-desa-border overflow-hidden bg-desa-soft"
                             style="isolation: isolate; z-index: 0; position: relative;"
                             role="region"
                             aria-label="Peta interaktif untuk memilih lokasi kejadian"
-                            aria-describedby="peta-petunjuk"
                         ></div>
                         <p id="peta-status" class="text-xs text-desa-muted mt-2" role="status" aria-live="polite">
                             Memuat peta OpenStreetMap...
@@ -214,7 +197,7 @@
                 </div>
 
                 <div>
-                    <label for="foto_bukti" class="block text-xs font-bold text-desa-dark mb-1">Foto Bukti (Opsional)</label>
+                    <label for="foto_bukti" class="block text-xs font-bold text-desa-dark mb-1">Foto Bukti</label>
                     <input
                         type="file"
                         id="foto_bukti"
@@ -222,7 +205,6 @@
                         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                         class="w-full min-h-[44px] px-3 py-2 rounded-lg bg-desa-mist border-2 border-desa-border text-sm text-desa-dark file:min-h-[36px] file:mr-3 file:px-3 file:rounded-md file:border-0 file:bg-desa-soft file:text-desa-dark file:font-semibold"
                     />
-                    <p class="text-xs text-desa-muted mt-1">Format JPG, JPEG, PNG, atau WEBP. Ukuran maksimal 5 MB.</p>
                     @error('foto_bukti')
                         <p class="text-xs font-bold text-red-600 mt-1">{{ $message }}</p>
                     @enderror

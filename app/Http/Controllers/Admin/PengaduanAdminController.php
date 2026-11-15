@@ -54,20 +54,52 @@ class PengaduanAdminController extends Controller
         $this->pastikanAdmin($request);
 
         $data = $request->validate([
-            'tanggapan' => ['required', 'string', 'max:10000'],
+            'status' => ['sometimes', 'required', 'string', Rule::in(self::STATUS)],
+            'tanggapan' => ['nullable', 'required_without:status', 'string', 'max:10000'],
         ], [
-            'tanggapan.required' => 'Tanggapan wajib diisi.',
+            'status.required' => 'Status pengaduan wajib dipilih.',
+            'status.in' => 'Status pengaduan tidak valid.',
+            'tanggapan.required_without' => 'Tanggapan wajib diisi.',
             'tanggapan.max' => 'Tanggapan maksimal 10.000 karakter.',
         ]);
 
         $pengaduan = Pengaduan::findOrFail($id);
-        $pengaduan->update([
-            'tanggapan' => $data['tanggapan'],
-            'ditanggapi_oleh' => $request->user()->id,
-            'tanggal_tanggapan' => now(),
-        ]);
+        $perubahan = [];
 
-        return back()->with('sukses', 'Tanggapan pengaduan berhasil disimpan.');
+        if (array_key_exists('status', $data)) {
+            $perubahan['status'] = $data['status'];
+        }
+
+        if (array_key_exists('tanggapan', $data)) {
+            // Normalisasi CRLF ke LF agar perbandingan tidak menganggap tanggapan lama berubah saat hanya status yang diperbarui.
+            $tanggapanBaru = str_replace("\r\n", "\n", trim((string) $data['tanggapan']));
+            $tanggapanLama = str_replace("\r\n", "\n", trim((string) $pengaduan->tanggapan));
+
+            if ($tanggapanBaru === '') {
+                if ($pengaduan->tanggapan !== null) {
+                    $perubahan['tanggapan'] = null;
+                    $perubahan['ditanggapi_oleh'] = null;
+                    $perubahan['tanggal_tanggapan'] = null;
+                }
+            } elseif ($tanggapanBaru !== $tanggapanLama) {
+                $perubahan['tanggapan'] = $data['tanggapan'];
+                $perubahan['ditanggapi_oleh'] = $request->user()->id;
+                $perubahan['tanggal_tanggapan'] = now();
+            }
+        }
+
+        if ($perubahan !== []) {
+            $pengaduan->update($perubahan);
+        }
+
+        $pesanSukses = match (true) {
+            isset($perubahan['status'], $perubahan['tanggapan']) => 'Status dan tanggapan pengaduan berhasil disimpan.',
+            isset($perubahan['tanggapan']) => 'Tanggapan pengaduan berhasil disimpan.',
+            isset($perubahan['status']) => 'Status pengaduan berhasil diperbarui.',
+            default => 'Perubahan pengaduan berhasil disimpan.',
+        };
+
+        return back()->with('sukses', $pesanSukses);
     }
 
     public function updateStatus(Request $request, $id): RedirectResponse

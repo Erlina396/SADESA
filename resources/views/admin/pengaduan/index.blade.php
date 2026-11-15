@@ -6,10 +6,6 @@
             </div>
         @endif
 
-        <div>
-            <p class="text-sm text-desa-muted">Pantau pengaduan masuk, periksa bukti, dan tindak lanjuti aspirasi warga.</p>
-        </div>
-
         <div class="bg-white rounded-2xl border-2 border-desa-border p-5 shadow-xs">
             <form action="{{ route('admin.pengaduan.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                 <div class="lg:col-span-2">
