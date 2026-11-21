@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Public\InformasiController;
 use App\Http\Controllers\Public\VerifikasiSuratController;
 use App\Http\Controllers\Public\PengaduanPublicController;
 use Illuminate\Support\Facades\Route;
@@ -33,18 +34,10 @@ Route::prefix('profil')->name('profil.')->group(function () {
 
 // Halaman Informasi, Berita & Dokumentasi
 Route::prefix('informasi')->name('informasi.')->group(function () {
-    Route::get('/berita', function () {
-        return view('public.informasi.berita-index');
-    })->name('berita.index');
-    Route::get('/berita/{slug}', function ($slug) {
-        return view('public.informasi.berita-detail', compact('slug'));
-    })->name('berita.detail');
-    Route::get('/agenda', function () {
-        return view('public.informasi.agenda-index');
-    })->name('agenda.index');
-    Route::get('/galeri', function () {
-        return view('public.informasi.galeri-index');
-    })->name('galeri.index');
+    Route::get('/berita', [InformasiController::class, 'beritaIndex'])->name('berita.index');
+    Route::get('/berita/{slug}', [InformasiController::class, 'beritaDetail'])->name('berita.detail');
+    Route::get('/agenda', [InformasiController::class, 'agendaIndex'])->name('agenda.index');
+    Route::get('/galeri', [InformasiController::class, 'galeriIndex'])->name('galeri.index');
 });
 
 // Form Pengaduan Warga & Cek Tiket Aduan

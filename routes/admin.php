@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AgendaAdminController;
+use App\Http\Controllers\Admin\GaleriAdminController;
+use App\Http\Controllers\Admin\InformasiAdminController;
 use App\Http\Controllers\Admin\JenisSuratController;
 use App\Http\Controllers\Admin\SuratPengantarController;
 use Illuminate\Support\Facades\Route;
@@ -76,17 +79,33 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     });
 
     // 4. Modul Publikasi Berita, Agenda & Galeri (Anggota 4)
-    Route::prefix('informasi')->name('informasi.')->group(function () {
-        Route::get('/berita', function () {
-            return view('admin.informasi.berita-index');
-        })->name('berita.index');
-        Route::get('/agenda', function () {
-            return view('admin.informasi.agenda-index');
-        })->name('agenda.index');
-        Route::get('/galeri', function () {
-            return view('admin.informasi.galeri-index');
-        })->name('galeri.index');
-    });
+    Route::prefix('informasi')
+        ->name('informasi.')
+        ->middleware(PeranDiizinkan::class.':admin,kades')
+        ->group(function () {
+            Route::prefix('berita')->name('berita.')->group(function () {
+                Route::get('/', [InformasiAdminController::class, 'index'])->name('index');
+                Route::post('/', [InformasiAdminController::class, 'store'])->name('store');
+                Route::put('/{id}', [InformasiAdminController::class, 'update'])->name('update');
+                Route::delete('/{id}', [InformasiAdminController::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('agenda')->name('agenda.')->group(function () {
+                Route::get('/', [AgendaAdminController::class, 'index'])->name('index');
+                Route::post('/', [AgendaAdminController::class, 'store'])->name('store');
+                Route::put('/{id}', [AgendaAdminController::class, 'update'])->name('update');
+                Route::delete('/{id}', [AgendaAdminController::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('galeri')->name('galeri.')->group(function () {
+                Route::get('/', [GaleriAdminController::class, 'index'])->name('index');
+                Route::post('/', [GaleriAdminController::class, 'store'])->name('store');
+                Route::put('/{id}', [GaleriAdminController::class, 'update'])->name('update');
+                Route::delete('/{id}', [GaleriAdminController::class, 'destroy'])->name('destroy');
+                Route::delete('/foto/{id}', [GaleriAdminController::class, 'destroyFoto'])->name('foto.destroy');
+                Route::put('/foto/{id}/sampul', [GaleriAdminController::class, 'jadikanSampul'])->name('foto.sampul');
+            });
+        });
 
     // 5. Modul Profil Desa & Aparatur (Anggota 5)
     Route::prefix('profil-desa')->name('profil.')->group(function () {
