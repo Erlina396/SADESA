@@ -3,6 +3,7 @@
 use App\Http\Controllers\Public\InformasiController;
 use App\Http\Controllers\Public\VerifikasiSuratController;
 use App\Http\Controllers\Public\PengaduanPublicController;
+use App\Http\Controllers\Public\PanduanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,12 +52,9 @@ Route::prefix('pengaduan')->name('pengaduan.')->group(function () {
 
 // Modul Panduan & Tutorial Penggunaan Sistem
 Route::prefix('panduan')->name('panduan.')->group(function () {
-    Route::get('/', function () {
-        return view('public.panduan.index');
-    })->name('index');
-    Route::get('/{slug}', function ($slug) {
-        return view('public.panduan.detail', compact('slug'));
-    })->name('detail');
+    Route::get('/', [PanduanController::class, 'index'])->name('index');
+
+    Route::get('/{slug}', [PanduanController::class, 'detail'])->name('detail');
 });
 
 // Validasi Keabsahan Surat Digital via QR Code (Anggota 2: Nadhif Athaasyam Nurdewana - K3524062)
